@@ -6,12 +6,13 @@ const ejs = require("ejs");
 const _ = require("lodash");
 const mongoose = require("mongoose");
 const alert = require("alert");
-const swal = require("sweetalert");
+// const swal = require("sweetalert");
 const session = require('express-session');
 const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
-const swal = require("sweetalert2");
-
+const { check, validationResult } = require('express-validator');
+const path = require('path')
+// const swal = require("sweetalert2");
 
 
 const homeStartingContent = "Writing and publishing blog posts or articles on your own website is critical to generate qualified traffic.Publishing informational content on a website blog, resource section, orContent is everywhere today. It’s insanely competitive.Did you know that over 70 million blog posts are published monthly?If you’re going to gain any real traction, you need to look beyond publishing content on your website.In addition to mainstream outlets like Medium, sharing your content on industry or niche platforms can also help it get seen by more people.Think of sharing your content on other outlets like a megaphone: the more places you promote it, the wider the message will spread.";
@@ -114,22 +115,21 @@ app.get("/edit/:postId", (req, res) => {
   });
 });
 
-
-app.post("/compose", function(req, res) {
-  const post = new Post({
-    title: req.body.postTitle,
-    content: req.body.postContent,
-    // success: req.flash('success')
-  });
-
-  post.save(function(err) {
-    if (!err) {
-      
-      res.redirect("/");
-    }
-  });
-});
-
+// app.post("/compose", function(req, res){
+//   const post = {
+//     title: req.body.postTitle,
+//     content: req.body.postBody
+//   };
+//   Post.insertMany(post, function(err){
+//     if (err) {
+//       console.log("err");
+//     } else {
+//       console.log("successfully inserted");
+//     }});
+//   // post.save();
+//   // posts.push(posts);
+//   res.redirect("/");
+// });
 
 app.get('/posts/:postId', function(req, res) {
   const requestedPostId = req.params.postId;
@@ -142,6 +142,54 @@ app.get('/posts/:postId', function(req, res) {
       });
     });
 });
+
+
+// app.post("/compose", function(req, res) {
+//   const post = new Post({
+//     title: req.body.postTitle,
+//     content: req.body.postContent
+//   });
+//
+//   post.save(function(err) {
+//     if (!err) {
+//       setTimeout(function () {
+//          res.redirect("/");
+//       }, 2000)
+//     }
+//   });
+// });
+
+// app.post("/compose" ,
+//     check('postTitle').isLength({ min: 1}).withMessage("enter POST"),
+//     check('postContent').isLength({ min: 1}).withMessage("enter Content")
+//     , function(req, res) {
+//      const errors = validationResult(req);
+//      if (!errors.isEmpty()) {
+//         res.render('compose',{data:errors.array()})
+//     }
+//     else {
+//       const post = new Post({
+//           title: req.body.postTitle,
+//           content: req.body.postContent
+//         });
+//         post.save(function(err) { if (!err) {setTimeout(function () {res.redirect("/");}, 2000)});
+
+
+app.post("/compose", function(req, res) {
+  const post = new Post({
+    title: req.body.postTitle,
+    content: req.body.postContent
+  });
+
+  post.save(function(err) {
+    if (!err) {
+      setTimeout(function () {
+         res.redirect("/");
+      }, 2000)
+    }
+  });
+});
+
 
 // app.post("/edit/:postId", function(req, res){
 //    const requestedPostId = req.params.postId;
@@ -175,8 +223,11 @@ app.post("/edit/:postId", function(req, res) {
     if (err) {
       console.log(err);
     } else {
-
-      res.redirect("/");
+      // swal("EDITED SUCCESSFULLY");
+      // res.redirect("/");
+      setTimeout(function () {
+         res.redirect("/");
+      }, 2000)
     }
   }));
 });
@@ -187,9 +238,11 @@ app.post("/delete", function(req, res) {
 
   Post.findByIdAndDelete(deletePost, function(err) {
     if (!err) {
-     // window.alert("successfully deleted")
-
-      res.redirect("/");
+      // swal("successfully deleted", "success");
+      // res.redirect("/");
+      setTimeout(function () {
+         res.redirect("/");
+      }, 2000)
 
     }
   });
